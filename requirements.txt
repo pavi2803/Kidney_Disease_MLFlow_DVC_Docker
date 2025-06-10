@@ -16,4 +16,5 @@ scipy
 Flask
 Flask-Cors
 gdown
+python-box>=5.4.1
 -e .
