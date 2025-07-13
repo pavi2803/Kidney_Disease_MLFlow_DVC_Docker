@@ -1,171 +1,122 @@
-# Kidney-Disease-Classification-MLflow-DVC
+# Kidney Disease Detection App - Docker + Render Deployment
 
+This repository contains a Streamlit web application to detect signs of **Kidney Disease** using a deep learning model built with **TensorFlow (VGG16 transfer learning)**.
 
-## Workflows
+---
 
-1. Update config.yaml
-2. Update secrets.yaml [Optional]
-3. Update params.yaml
-4. Update the entity
-5. Update the configuration manager in src config
-6. Update the components
-7. Update the pipeline 
-8. Update the main.py
-9. Update the dvc.yaml
-10. app.py
+## 🔍 App Features
 
-# How to run?
-### STEPS:
+* Upload a kidney CT scan image (JPG/PNG)
+* The model predicts:
 
-Clone the repository
+  * ✅ No Kidney Disease
+  * 🚨 Likely Kidney Disease
+* Designed as a **supportive AI assistant** for medical professionals — **not a replacement for diagnosis**.
 
-```bash
-https://github.com/krishnaik06/Kidney-Disease-Classification-Deep-Learning-Project
-```
-### STEP 01- Create a conda environment after opening the repository
+---
 
-```bash
-conda create -n cnncls python=3.8 -y
-```
+## 🧠 Model Overview
 
-```bash
-conda activate cnncls
-```
+* Base Model: `VGG16` pretrained on ImageNet
+* Training: Fine-tuned using transfer learning
+* Framework: `TensorFlow 2.19.0`
+* Input Shape: `224x224x3`
+* Output: Binary classification (0: No disease, 1: Disease)
 
+---
 
-### STEP 02- install the requirements
-```bash
-pip install -r requirements.txt
-```
+## 🐳 Docker Setup
 
-```bash
-# Finally run the following command
-python app.py
+### Dockerfile
+
+```Dockerfile
+FROM python:3.12.7
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+COPY . .
+CMD ["streamlit", "run", "app.py", "--server.port=8080", "--server.address=0.0.0.0"]
 ```
 
-Now,
-```bash
-open up you local host and port
-```
-
-
-
-
-
-
-## MLflow
-
-- [Documentation](https://mlflow.org/docs/latest/index.html)
-
-- [MLflow tutorial](https://youtu.be/qdcHHrsXA48?si=bD5vDS60akNphkem)
-
-##### cmd
-- mlflow ui
-
-### dagshub
-[dagshub](https://dagshub.com/)
-
-MLFLOW_TRACKING_URI
-MLFLOW_TRACKING_USERNAME=
-MLFLOW_TRACKING_PASSWORD=
-python script.py
-
-Run this to export as env variables:
-
-```bash
-
-
-
-export MLFLOW_TRACKING_USERNAME=
-
-export MLFLOW_TRACKING_PASSWORD=6824692c47a369aa6f9eac5b10041d5c8edbcef0
+### requirements.txt (snippet)
 
 ```
+tensorflow==2.19.0
+streamlit==1.24.0
+pillow
+numpy
+```
 
+---
 
-### DVC cmd
+## 🚀 Deploying to Render using Docker Hub
 
-1. dvc init
-2. dvc repro
-3. dvc dag
+1. **Build and Push Docker Image to Docker Hub**
 
+   ```bash
+   docker build -t pavi2803/kidney-disease-app:latest .
+   docker push pavi2803/kidney-disease-app:latest
+   ```
 
-## About MLflow & DVC
+2. **Set Up Render Web Service**
 
-MLflow
+   * Go to [Render Dashboard](https://dashboard.render.com/)
+   * Click **New Web Service** > **Existing Image**
+   * Enter:
 
- - Its Production Grade
- - Trace all of your expriements
- - Logging & taging your model
+     * **Image URL**: `docker.io/pavi2803/kidney-disease-app:latest`
+     * **Port**: `8080`
+     * **Start Command**: leave blank (Docker CMD handles this)
+   * Click **Connect**
 
+---
 
-DVC 
+## 🔁 CI/CD with GitHub Actions
 
- - Its very lite weight for POC only
- - lite weight expriements tracker
- - It can perform Orchestration (Creating Pipelines)
+This repo supports GitHub Actions to auto-build and push Docker images on every push to `main` branch.
 
+### .github/workflows/docker.yml
 
+```yaml
+name: CI/CD - Docker Push to Docker Hub
 
-# AWS-CICD-Deployment-with-Github-Actions
+on:
+  push:
+    branches: [ main ]
 
-## 1. Login to AWS console.
+jobs:
+  docker-build-push:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Build Image
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/kidney-disease-app:latest .
+      - name: Push Image
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/kidney-disease-app:latest
+```
 
-## 2. Create IAM user for deployment
+---
 
-	#with specific access
+## ✅ Live App
 
-	1. EC2 access : It is virtual machine
+🧪 Try the app here → [https://kidneydiseasedetect.onrender.com](https://kidneydiseasedetect.onrender.com) *(update link if needed)*
 
-	2. ECR: Elastic Container registry to save your docker image in aws
+---
 
+## ⚠️ Disclaimer
 
-	#Description: About the deployment
+This app is for **educational and prototyping purposes only**. It is not intended for clinical use or diagnostic decision-making. Always consult medical professionals.
 
-	1. Build docker image of the source code
+---
 
-	2. Push your docker image to ECR
+## 👤 Author
 
-	3. Launch Your EC2 
+Pavithra Senthilkumar | `pavi2803`
 
-	4. Pull Your image from ECR in EC2
-
-	5. Lauch your docker image in EC2
-
-	#Policy:
-
-	1. AmazonEC2ContainerRegistryFullAccess
-
-	2. AmazonEC2FullAccess
-
-	
-## 3. Create ECR repo to store/save docker image
-    - Save the URI: 566373416292.dkr.ecr.us-east-1.amazonaws.com/chicken
-
-	
-## 4. Create EC2 machine (Ubuntu) 
-
-## 5. Open EC2 and Install docker in EC2 Machine:
-	
-	
-	#optinal
-
-	sudo apt-get update -y
-
-	sudo apt-get upgrade
-	
-	#required
-
-	curl -fsSL https://get.docker.com -o get-docker.sh
-
-	sudo sh get-docker.sh
-
-	sudo usermod -aG docker ubuntu
-
-	newgrp docker
-	
-# 6. Configure EC2 as self-hosted runner:
-    setting>actions>runner>new self hosted runner> choose os> then run command one by one
-
-
-
+* GitHub: [@pavi2803](https://github.com/pavi2803)
+* Email: [pavithrasenthil03@gmail.com](mailto:pavithrasenthil03@gmail.com)
