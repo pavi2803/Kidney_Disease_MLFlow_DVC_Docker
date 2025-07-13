@@ -1,9 +1,11 @@
-FROM python:3.8-slim-buster
+# Dockerfile
+FROM python:3.12.7
 
-RUN apt update -y && apt install awscli -y
 WORKDIR /app
 
-COPY . /app
-RUN pip install -r requirements.txt
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-CMD ["python3", "app.py"]
+COPY . .
+
+CMD ["streamlit", "run", "app.py", "--server.port=8080", "--server.address=0.0.0.0"]
