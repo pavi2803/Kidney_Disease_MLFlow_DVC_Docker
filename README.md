@@ -15,6 +15,12 @@ This repository contains a Streamlit web application to detect signs of **Kidney
 
 ---
 
+## ✅ Live App
+
+🧪 Try the app here → https://kidney-disease-app-latest.onrender.com/ *(update link if needed)*
+
+---
+
 ## 🧠 Model Overview
 
 * Base Model: `VGG16` pretrained on ImageNet
@@ -99,12 +105,6 @@ jobs:
       - name: Push Image
         run: docker push ${{ secrets.DOCKER_USERNAME }}/kidney-disease-app:latest
 ```
-
----
-
-## ✅ Live App
-
-🧪 Try the app here → [https://kidneydiseasedetect.onrender.com](https://kidneydiseasedetect.onrender.com) *(update link if needed)*
 
 ---
 
