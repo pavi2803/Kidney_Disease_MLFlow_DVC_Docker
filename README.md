@@ -17,7 +17,7 @@ This repository contains a Streamlit web application to detect signs of **Kidney
 
 ## ✅ Live App
 
-🧪 Try the app here → https://kidney-disease-app-latest.onrender.com/ *(update link if needed)*
+🧪 Try the app here → https://kidney-disease-app-latest.onrender.com/
 
 ---
 
